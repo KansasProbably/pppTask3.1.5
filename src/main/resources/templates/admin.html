@@ -30,20 +30,38 @@
 </head>
 <body>
 <div align ="center">
-    <h1>User</h1>
+    <h1>Admin</h1>
+    <button onclick="window.location.href = '/admin/create';">Add new user</button>
     <br>
     <br>
     <table border="1">
         <tr>
-            <th th:width="50">id</th>
-            <th th:width="120">username</th>
-            <th th:width="120">password</th>
+            <th th:width="50">UserId</th>
+            <th th:width="100">Username</th>
+            <th th:width="150">Password</th>
             <th th:width="150">Email</th>
+            <th th:width="70">Role</th>
+            <th th:width="70">Edit</th>
+            <th th:width="70">Delete</th>
         </tr>
-        <td th:utext="${user.id}">UserId</td>
-        <td th:utext="${user.username}">Username</td>
-        <td th:utext="${user.password}">Password</td>
-        <td th:utext="${user.email}">Email</td>
+        <tr th:each="users : ${users}">
+
+            <td><a th:href="@{'/' + ${users.id}}" th:utext="${users.id}">id</a></td>
+            <td th:text="${users.username}">username</td>
+            <td th:text="${users.password}">password</td>
+            <td th:text="${users.email}">Email</td>
+            <td th:text="${users.roles}">Role</td>
+            <td>
+                <form th:action="@{'/admin/edit/' + ${users.id}}">
+                    <input type="submit" class="buttonEdit" value="Edit"/>
+                </form>
+            </td>
+            <td>
+                <form th:method="DELETE" th:action="@{'/admin/delete/' + ${users.id}}">
+                    <input type="submit" class="buttonDelete" value="Delete"/>
+                </form>
+            </td>
+        </tr>
     </table>
     <a href="javascript: document.logoutForm.submit()" role="menuitem"> Logout</a>
 
