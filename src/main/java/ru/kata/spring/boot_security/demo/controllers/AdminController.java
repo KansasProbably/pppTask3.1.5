@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 
+import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
+import java.security.Principal;
 import java.util.List;
 
 
@@ -26,42 +28,35 @@ public class AdminController {
 
 
     @GetMapping("/admin")
-    public String findAll(Model model) {
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-        return "admin";
+    public String adminPage(Model model, Principal principal) {
+
+        model.addAttribute("users", userService.findAll());
+        model.addAttribute("user",userService.findByUsername(principal.getName()));
+        model.addAttribute("roles", roleService.getAllRoles());
+        return "adminPage";
 
     }
 
-    @GetMapping("/admin/create")
-    public String createUserForm(@ModelAttribute("user") User user,Model model) {
-        model.addAttribute("roles",roleService.getAllRoles());
-        return "create";
-    }
-
-    @PostMapping("/admin/create")
-    public String createUser(User user) {
-        userService.saveUser(user);
+    @PostMapping("/admin/new")
+    public String createUser(@ModelAttribute("newUser") User user) {
+        userService.registerNewAccount(user);
         return "redirect:/admin";
     }
 
-    @RequestMapping(value = "/admin/delete/{id}",method = RequestMethod.POST)
-    public String deleteUser(@PathVariable("id")Long id) {
+
+
+
+    @PostMapping("/admin/delete/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
         userService.deleteById(id);
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/edit/{id}")
-    public String updateUserForm(@PathVariable ("id") Long id, Model model) {
-        User user = userService.findById(id);
-        model.addAttribute("user", user);
-        model.addAttribute("roles",roleService.getAllRoles());
-        return "/edit";
-    }
-
-    @PostMapping("/admin/edit")
-    public String updateUser(User user) {
-        userService.saveUser(user);
+    @PostMapping("/admin/edit/{id}")
+    public String editUser(@ModelAttribute("editUser") User user) {
+        userService.editAccount(user);
         return "redirect:/admin";
     }
+
+
 }

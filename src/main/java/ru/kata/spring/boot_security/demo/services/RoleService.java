@@ -22,4 +22,6 @@ public class RoleService {
     public Collection<Role> getAllRoles() {
         return new HashSet<>(roleRepository.findAll());
     }
+
+
 }
